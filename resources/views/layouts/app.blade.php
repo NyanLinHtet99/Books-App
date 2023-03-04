@@ -16,7 +16,10 @@
     <link href="https://fonts.bunny.net/css?family=Nunito" rel="stylesheet">
 
     <!-- Scripts -->
-    @vite(['resources/sass/app.scss', 'resources/js/app.js'])
+    <script src="{{ mix('js/app.js') }}"></script>
+    <script type="text/javascript" src="{{ mix('js/jqwidgets.js') }}"></script>
+    <link rel="stylesheet" href="{{ mix('css/app.css') }}">
+    <link rel="stylesheet" href="{{ mix('css/jqwidgets.css') }}">
 </head>
 
 <body>
