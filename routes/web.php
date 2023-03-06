@@ -7,6 +7,7 @@ use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\Route;
 use Intervention\Image\Facades\Image;
 use Illuminate\Support\Facades\Storage;
+use App\Http\Controllers\UserInfoController;
 
 /*
 |--------------------------------------------------------------------------
@@ -19,32 +20,7 @@ use Illuminate\Support\Facades\Storage;
 |
 */
 
-Route::post('/image', function () {
-    request()->validate([
-        'image' => 'required|image|mimes:jpeg,png,jpg,gif,svg|max:50000',
-    ]);
-
-    $userId = auth()->user()->id;
-    $user = User::find($userId);
-    $imageName = $userId . '.' . request('image')->extension();
-    $path = request('image')->storeAs(
-        'avatars',
-        $imageName,
-        'public'
-    );
-
-    if ($user->info === null) {
-        $user->info()->save(new UserInfo(['image' => $imageName])); // trigger created event
-        // $user->info()->create($input);// trigger created event
-    } else {
-        $user->info->update(['image' => $imageName]); // trigger updated event
-        // $user->info()->update($input); // will NOT trigger updated event
-    }
-
-    return back()
-        ->with('success', 'You have successfully upload image.')
-        ->with('image', $imageName);
-})->name('image.store');
+Route::post('/user/update', [UserInfoController::class, 'update'])->name('user.update');
 
 Auth::routes();
 
