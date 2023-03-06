@@ -21,7 +21,7 @@ use Illuminate\Support\Facades\Storage;
 
 Route::post('/image', function () {
     request()->validate([
-        'image' => 'required|image|mimes:jpeg,png,jpg,gif,svg|max:10000',
+        'image' => 'required|image|mimes:jpeg,png,jpg,gif,svg|max:50000',
     ]);
 
     $userId = auth()->user()->id;

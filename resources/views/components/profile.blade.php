@@ -1,35 +1,38 @@
-{{-- <section class="vh-100" style="background-color: #f4f5f7;">
-    
-</section> --}}
-{{-- <div class="py-2 h-100">
-    <div class="row d-flex justify-content-center align-items-center h-100">
-        <div class="col col-lg-6 mb-4 mb-lg-0"></div>
-    </div>
-</div> --}}
-
-<div class="card mb-3" style="border-radius: .5rem;">
+<div class="card" style="border-radius: .5rem; height: 100%">
     <div class="row g-0">
-        <div class="col-md-4 gradient-custom text-center text-white"
+        <div class="col-md-4 text-center"
             style="border-top-left-radius: .5rem; border-bottom-left-radius: .5rem;">
-            <img src="https://mdbcdn.b-cdn.net/img/Photos/new-templates/bootstrap-chat/ava1-bg.webp" alt="Avatar"
-                class="img-fluid my-5" style="width: 80px;" />
-            <h5>Marie Horwitz</h5>
-            <p>Web Designer</p>
-            <i class="far fa-edit mb-5"></i>
+            <img src="{{ Storage::url('avatars/' . auth()->user()->info->image) }}" alt="Avatar"
+                class="img-fluid my-5 rounded-circle" style="width: 100px;height: 100px" />
+            <i class="fas fa-edit mb-5"></i>
         </div>
         <div class="col-md-8">
             <div class="card-body p-4">
+                <form action="{{ route('image.store') }}" method="POST" enctype="multipart/form-data">
+                    @csrf
+                    <div class="mb-3">
+                        <label class="form-label" for="inputImage">Select Image:</label>
+                        <input type="file" name="image" id="inputImage"
+                            class="form-control @error('image') is-invalid @enderror">
+
+                        @error('image')
+                            <span class="text-danger">{{ $message }}</span>
+                        @enderror
+                    </div>
+
+                    <div class="mb-3">
+                        <button type="submit" class="btn btn-success">Upload</button>
+                    </div>
+
+                </form>
                 <h6>Information</h6>
                 <hr class="mt-0 mb-4">
                 <div class="row pt-1">
                     <div class="col-6 mb-3">
                         <h6>Email</h6>
-                        <p class="text-muted">info@example.com</p>
+                        <input type="text" id="email" class="text-muted" value="{{ auth()->user()->email }}">
                     </div>
-                    <div class="col-6 mb-3">
-                        <h6>Phone</h6>
-                        <p class="text-muted">123 456 789</p>
-                    </div>
+
                 </div>
                 <h6>Projects</h6>
                 <hr class="mt-0 mb-4">
