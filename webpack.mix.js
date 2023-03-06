@@ -12,7 +12,9 @@ const mix = require("laravel-mix");
  */
 
 mix.js("resources/js/app.js", "public/js")
-    .js("resources/js/jqwidgets.js", "public/js")
-    .sass("resources/sass/jqwidgets.scss", "public/css")
+    .js("resources/assets/jqwidgets/jqx-all.js", "public/js")
+    .js("resources/assets/jqwidgets/jqxcore.js", "public/js")
     .sass("resources/sass/app.scss", "public/css")
+    .postCss("resources/assets/jqwidgets/styles/jqx.base.css", "public/css")
+    .postCss("resources/assets/jqwidgets/styles/jqx.light.css", "public/css")
     .sourceMaps();

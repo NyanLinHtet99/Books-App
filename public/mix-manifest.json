@@ -1,6 +1,8 @@
 {
     "/js/app.js": "/js/app.js",
-    "/js/jqwidgets.js": "/js/jqwidgets.js",
+    "/js/jqx-all.js": "/js/jqx-all.js",
+    "/js/jqxcore.js": "/js/jqxcore.js",
     "/css/app.css": "/css/app.css",
-    "/css/jqwidgets.css": "/css/jqwidgets.css"
+    "/css/jqx.light.css": "/css/jqx.light.css",
+    "/css/jqx.base.css": "/css/jqx.base.css"
 }

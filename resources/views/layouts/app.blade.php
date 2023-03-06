@@ -9,6 +9,8 @@
     <meta name="csrf-token" content="{{ csrf_token() }}">
 
     <title>{{ config('app.name', 'Laravel') }}</title>
+    {{-- <link rel="stylesheet" href="{{ mix('css/jqwidgets.css') }}" type="text/css">
+    <script type="text/javascript" src="{{ mix('js/jqwidgets.js') }}"></script> --}}
 
     <!-- Fonts -->
     <link rel="dns-prefetch" href="//fonts.gstatic.com">
@@ -17,9 +19,11 @@
 
     <!-- Scripts -->
     <script src="{{ mix('js/app.js') }}"></script>
-    <script type="text/javascript" src="{{ mix('js/jqwidgets.js') }}"></script>
     <link rel="stylesheet" href="{{ mix('css/app.css') }}">
-    <link rel="stylesheet" href="{{ mix('css/jqwidgets.css') }}">
+    <link rel="stylesheet" href="{{ mix('css/jqx.base.css') }}" type="text/css">
+    <link rel="stylesheet" href="{{ mix('css/jqx.light.css') }}" type="text/css">
+    <script type="text/javascript" src="{{ mix('js/jqxcore.js') }}"></script>
+    <script type="text/javascript" src="{{ mix('js/jqx-all.js') }}"></script>
 </head>
 
 <body>
