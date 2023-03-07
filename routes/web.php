@@ -8,6 +8,7 @@ use Illuminate\Support\Facades\Route;
 use Intervention\Image\Facades\Image;
 use Illuminate\Support\Facades\Storage;
 use App\Http\Controllers\UserInfoController;
+use App\Models\Book;
 
 /*
 |--------------------------------------------------------------------------
@@ -21,6 +22,10 @@ use App\Http\Controllers\UserInfoController;
 */
 
 Route::post('/user/update', [UserInfoController::class, 'update'])->name('user.update');
+Route::get('/books', function () {
+    $data = Book::paginate(15);
+    return json_encode($data);
+});
 
 Auth::routes();
 

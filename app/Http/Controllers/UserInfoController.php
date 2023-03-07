@@ -27,13 +27,7 @@ class UserInfoController extends Controller
                 'public'
             );
         }
-
-        if ($user->info === null) {
-            $user->info()->save(new UserInfo(['image' => $imageName ?? 'default.png', 'bio' => request('bio') ?? '']));
-        } else {
-            $user->info->update(['image' => $imageName ?? 'default.png', 'bio' => request('bio') ?? '']);
-        }
-
+        $user->info->update(['image' => $imageName ?? 'default.png', 'bio' => request('bio') ?? '']);
         $user->update(['name' => request('name'), 'email' => request('email')]);
         return back()->with('infoUpdated', true);
     }

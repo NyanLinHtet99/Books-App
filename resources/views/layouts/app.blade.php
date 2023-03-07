@@ -26,7 +26,10 @@
     <script type="text/javascript" src="{{ mix('js/jqx-all.js') }}"></script>
 </head>
 
-<body>
+<body style="overflow-y: auto">
+    <script>
+        let x;
+    </script>
     <div id="app">
         <nav class="navbar navbar-expand-md navbar-light bg-white shadow-sm">
             <div class="container">
@@ -92,6 +95,7 @@
             @yield('content')
         </main>
     </div>
+    {{-- <script src="{{ Storage::url('js/profileWindow.js') }}" type="module"></script> --}}
 </body>
 
 </html>

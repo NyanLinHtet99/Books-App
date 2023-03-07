@@ -3,13 +3,12 @@
 namespace Database\Factories;
 
 use App\Models\User;
-use Illuminate\Support\Str;
 use Illuminate\Database\Eloquent\Factories\Factory;
 
 /**
- * @extends \Illuminate\Database\Eloquent\Factories\Factory<\App\Models\UserInfo>
+ * @extends \Illuminate\Database\Eloquent\Factories\Factory<\App\Models\Book>
  */
-class UserInfoFactory extends Factory
+class BookFactory extends Factory
 {
     /**
      * Define the model's default state.
@@ -20,6 +19,9 @@ class UserInfoFactory extends Factory
     {
         return [
             'user_id' => User::factory(),
+            'title' => $this->faker->sentence(),
+            'description' => $this->faker->paragraph(),
+            'cover' => 'default.jpg',
         ];
     }
 }

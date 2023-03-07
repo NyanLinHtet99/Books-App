@@ -1,15 +1,15 @@
 <div class="card border-0" style="height: 100%">
     <div class="row g-0">
         <div class="col-md-4 text-center">
-            <img src="{{ Storage::url('avatars/' . (is_null(auth()->user()->info) ? 'default.png' : auth()->user()->info->image)) }}"
-                alt="Avatar" class="img-fluid my-5 rounded-circle" style="width: 100px;height: 100px" id="avatar" />
-            <i class="fas fa-edit mb-5 zoom" id="editImage"></i>
+            <img src="{{ Storage::url('avatars/' . auth()->user()->info->image) }}" alt="Avatar"
+                class="img-fluid my-5 rounded-circle" style="width: 100px;height: 100px" id="avatar" />
+            <i class="fas fa-edit mb-5 grow" id="editImage"></i>
         </div>
         <div class="col-md-8">
             <div class="card-body p-4">
                 <form action="{{ route('user.update') }}" method="POST" enctype="multipart/form-data" id="userForm">
                     @csrf
-                    <input type="file" name="image" id="inputImage" hidden>
+                    <input type="file" name="image" id="inputImage" hidden class="userForm-input">
                 </form>
                 @if ($errors->any())
                     <div class="alert alert-danger">
@@ -20,7 +20,7 @@
                         </ul>
                     </div>
                 @endif
-                <p class="bg-info alert d-none" id="imageUpdateAlert">Image will be updated after saved</p>
+                <p class="bg-info alert d-none" id="UpdateAlert">Changes will be updated after saved</p>
                 <h6>Information</h6>
                 <hr class="mt-0 mb-4">
                 <div class="row pt-1">
