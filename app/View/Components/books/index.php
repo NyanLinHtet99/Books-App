@@ -22,9 +22,6 @@ class index extends Component
      */
     public function render(): View|Closure|string
     {
-        return view('components.books.index', [
-            'books' => Book::paginate(15),
-            
-        ]);
+        return view('components.books.index');
     }
 }

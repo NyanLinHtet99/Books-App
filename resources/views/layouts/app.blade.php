@@ -95,7 +95,7 @@
             @yield('content')
         </main>
     </div>
-    {{-- <script src="{{ Storage::url('js/profileWindow.js') }}" type="module"></script> --}}
+    <script src="{{ Storage::url('js/profileWindow.js') }}" type="module"></script>
 </body>
 
 </html>
