@@ -14,7 +14,7 @@
                         <div class="p-4">
                             <div id="rating"></div> <span style="font-size: 0.8rem">Avg user rating</span>
                             <div id="userRating" data-book="{{ $book->id }}"></div>
-                            <span style="font-size: 0.8rem">Give rating</span>
+                            <span style="font-size: 0.8rem">Your rating</span>
                         </div>
                         <ul class="list-group list-group-flush">
                             @foreach ($book->tags as $tag)
@@ -23,8 +23,62 @@
                             @endforeach
                         </ul>
                         <div class="card-body">
-                            <a href="#" class="card-link">Card link</a>
-                            <a href="#" class="card-link">Another link</a>
+                            <form id="comment" method="POST" action="/comment/store">
+                                @csrf
+                                <input type="number" name="book_id" hidden value="{{ $book->id }}">
+                                <div class="mb-3">
+                                    <label for="comment" class="form-label">Your Comment</label>
+                                    <textarea class="form-control" id="comment" rows="3" name="body"></textarea>
+                                </div>
+                                <button class="btn btn-primary">Submit</button>
+                            </form>
+
+                            <div class="accordion mt-4" id="accordionExample">
+                                <div class="accordion-item">
+                                    <h2 class="accordion-header" id="headingOne">
+                                        <button class="accordion-button
+                                            @if (session('commented'))
+                                                collapsed
+                                            @endif
+                                            " type="button" data-bs-toggle="collapse"
+                                            data-bs-target="#collapseOne" aria-expanded="true" aria-controls="collapseOne">
+                                            Comments
+                                        </button>
+                                    </h2>
+                                    <div id="collapseOne" class="accordion-collapse collapse
+                                    @if (session('commented'))
+                                        show
+                                    @endif
+                                    " aria-labelledby="headingOne"
+                                        data-bs-parent="#accordionExample">
+                                        <div class="accordion-body">
+                                            @foreach ($book->comments as $comment)
+                                                <div class="d-flex flex-start mt-4">
+                                                    <a class="me-3" href="#">
+                                                        <img class="rounded-circle shadow-1-strong"
+                                                            src="{{ Storage::url('avatars/'. $comment->user->info->image) }}"
+                                                            alt="avatar" width="65" height="65" />
+                                                    </a>
+                                                    <div class="flex-grow-1 flex-shrink-1">
+                                                        <div>
+                                                            <div class="d-flex justify-content-between align-items-center">
+                                                                <p class="mb-1">
+                                                                    {{ $comment->user->name }} <span class="small">- {{ $comment->created_at->diffForHumans() }}</span>
+                                                                </p>
+                                                            </div>
+                                                            <p class="small mb-0">
+                                                                {{$comment->body}}
+                                                            </p>
+                                                        </div>
+                                                    </div>
+                                                </div>
+                                                <hr class="mt-4">
+                                            @endforeach
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+
                         </div>
                     </div>
                 </div>
@@ -39,10 +93,7 @@
                 }
             });
             init();
-            $('#userRating').jqxRating({
-                value: 0,
-                theme: 'light'
-            });
+
         });
         $('#userRating').on('change', function(e) {
             $.ajax({
@@ -59,8 +110,6 @@
             });
         });
 
-
-
         function init() {
             $.ajax({
                 url: '/rating?book_id=' + {{ $book->id }},
@@ -70,6 +119,10 @@
                     $("#rating").jqxRating({
                         value: response.avg_rating,
                         disabled: true,
+                        theme: 'light'
+                    });
+                    $('#userRating').jqxRating({
+                        value: response.user_rating,
                         theme: 'light'
                     });
                 },

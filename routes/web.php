@@ -1,6 +1,7 @@
 <?php
 
 use App\Http\Controllers\BookController;
+use App\Http\Controllers\CommentController;
 use App\Http\Controllers\RatingController;
 use App\Models\User;
 
@@ -28,6 +29,7 @@ Route::get('/books', [BookController::class, 'index']);
 Route::get('/books/{book}', [BookController::class, 'show']);
 Route::get('/rating', [RatingController::class, 'show']);
 Route::post('/rating/store', [RatingController::class, 'store']);
+Route::post('/comment/store', [CommentController::class, 'store']);
 Auth::routes();
 
 Route::get('/', [App\Http\Controllers\HomeController::class, 'index'])->name('home');

@@ -16,7 +16,7 @@ class Book extends Model
         return $this->belongsToMany(Tag::class);
     }
     public function comments(): HasMany{
-        return $this->hasMany(Comment::class);
+        return $this->hasMany(Comment::class)->orderByDesc('created_at');
     }
     public function ratings(): HasMany{
         return $this->hasMany(Rating::class);

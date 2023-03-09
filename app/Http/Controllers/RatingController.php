@@ -15,8 +15,10 @@ class RatingController extends Controller
         $count = $query->count();
         $sum = $query->sum('value');
         $avg = ceil($sum / $count);
+        $user_rating = $query->where('user_id', auth()->user()->id)->first();
         $data = [
             'avg_rating' => $avg,
+            'user_rating' => $user_rating ? $user_rating->value : 0,
         ];
         return json_encode($data);
     }
