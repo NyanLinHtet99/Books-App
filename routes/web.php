@@ -1,6 +1,7 @@
 <?php
 
 use App\Http\Controllers\BookController;
+use App\Http\Controllers\RatingController;
 use App\Models\User;
 
 use App\Models\UserInfo;
@@ -25,7 +26,7 @@ use App\Models\Book;
 Route::post('/user/update', [UserInfoController::class, 'update'])->name('user.update');
 Route::get('/books', [BookController::class, 'index']);
 Route::get('/books/{book}', [BookController::class, 'show']);
-
+Route::get('/rating',[RatingController::class, 'show']);
 Auth::routes();
 
 Route::get('/', [App\Http\Controllers\HomeController::class, 'index'])->name('home');

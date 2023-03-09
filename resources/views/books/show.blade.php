@@ -9,6 +9,7 @@
                         <div class="card-body">
                             <h5 class="card-title">{{ $book->title }}</h5>
                             <p class="card-text">{{ $book->description }}</p>
+                            <div id="rating"></div>
                         </div>
                         <ul class="list-group list-group-flush">
                             @foreach ($book->tags as $tag)
@@ -25,4 +26,38 @@
             </div>
         </div>
     </div>
+    <script type="text/javascript">
+        $(function() {
+            $.ajaxSetup({
+                headers: {
+                    'X-CSRF-TOKEN': $('meta[name="csrf-token"]').attr('content')
+                }
+            });
+            init();
+        });
+
+        function init() {
+            $.ajax({
+                url: '/rating?book_id=' + {{ $book->id }},
+                type: "get",
+                dataType: "json",
+                success: function(response) {
+                    $("#rating").jqxRating({
+                        width: 350,
+                        height: 35,
+                        value: response.avg_rating,
+                        theme: 'light'
+                    });
+                    $('#rating').on('change', function(e) {
+                        $.ajax({
+                            url: '/rating/store',
+                            type: 'post',
+                            dataType: 'json',
+
+                        });
+                    });
+                },
+            });
+        }
+    </script>
 @endsection
