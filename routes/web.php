@@ -26,7 +26,8 @@ use App\Models\Book;
 Route::post('/user/update', [UserInfoController::class, 'update'])->name('user.update');
 Route::get('/books', [BookController::class, 'index']);
 Route::get('/books/{book}', [BookController::class, 'show']);
-Route::get('/rating',[RatingController::class, 'show']);
+Route::get('/rating', [RatingController::class, 'show']);
+Route::post('/rating/store', [RatingController::class, 'store']);
 Auth::routes();
 
 Route::get('/', [App\Http\Controllers\HomeController::class, 'index'])->name('home');

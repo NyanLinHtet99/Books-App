@@ -4,12 +4,17 @@
         <div class="row justify-content-center">
             <div class="col-8">
                 <div class="container">
-                    <div class="card" style="width: 18rem;">
-                        <img src="{{ Storage::url('books/' . $book->cover) }}" class="card-img-top" alt="cover art">
-                        <div class="card-body">
-                            <h5 class="card-title">{{ $book->title }}</h5>
+                    <div class="card">
+                        <img src="{{ Storage::url('books/' . $book->cover) }}" class="card-img-top mx-auto mt-3"
+                            alt="cover art" style="max-width: 400px">
+                        <div class="card-body mt-3">
+                            <h5 class="card-title fw-bold">{{ $book->title }}</h5>
                             <p class="card-text">{{ $book->description }}</p>
-                            <div id="rating"></div>
+                        </div>
+                        <div class="p-4">
+                            <div id="rating"></div> <span style="font-size: 0.8rem">Avg user rating</span>
+                            <div id="userRating" data-book="{{ $book->id }}"></div>
+                            <span style="font-size: 0.8rem">Give rating</span>
                         </div>
                         <ul class="list-group list-group-flush">
                             @foreach ($book->tags as $tag)
@@ -34,7 +39,27 @@
                 }
             });
             init();
+            $('#userRating').jqxRating({
+                value: 0,
+                theme: 'light'
+            });
         });
+        $('#userRating').on('change', function(e) {
+            $.ajax({
+                url: '/rating/store',
+                type: 'post',
+                data: {
+                    'book_id': $(this).attr('data-book'),
+                    'value': e.value,
+                },
+                dataType: 'json',
+                success: function(response) {
+                    $('#rating').jqxRating('setValue', response.avg_rating);
+                }
+            });
+        });
+
+
 
         function init() {
             $.ajax({
@@ -43,18 +68,9 @@
                 dataType: "json",
                 success: function(response) {
                     $("#rating").jqxRating({
-                        width: 350,
-                        height: 35,
                         value: response.avg_rating,
+                        disabled: true,
                         theme: 'light'
-                    });
-                    $('#rating').on('change', function(e) {
-                        $.ajax({
-                            url: '/rating/store',
-                            type: 'post',
-                            dataType: 'json',
-
-                        });
                     });
                 },
             });
