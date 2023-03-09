@@ -17,6 +17,7 @@ A book may has many tags which uses the laravel many to many relation.
 
 For javascript part, this uses a dynamically created books grids which uses ajax
 for showing the next page or filtering the result without reloading the page.
+The user may also sort the result by average ratings which currently only has one desc mode. This also use ajax to swap out contents.
 Clicking the book will show the user a book window which is also created dynamically where one can go to the book's show page.
 
 As of this moment the page is rather unstlyed and every books uses the same default picture.

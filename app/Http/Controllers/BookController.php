@@ -14,11 +14,11 @@ class BookController extends Controller
         //     $query->where('content', 'like', 'code%');
         // })->get();
         $tag = request("tag");
-        $books = Book::latest()->with('tags')->filter(request(['tag']))->paginate(16);
+        $books = Book::with('tags')->filter(request(['tag', 'sort']));
         // $books = Book::whereHas('tags', function (Builder $query) use ($tag) {
         //     $query->where('tags.id', $tag);
         // })->paginate(16);
-        return json_encode($books);
+        return json_encode($books->paginate(16));
     }
     public function show(Book $book)
     {

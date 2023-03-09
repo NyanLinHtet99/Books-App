@@ -3,6 +3,7 @@
 use App\Http\Controllers\BookController;
 use App\Http\Controllers\CommentController;
 use App\Http\Controllers\RatingController;
+use App\Http\Controllers\TagController;
 use App\Models\User;
 
 use App\Models\UserInfo;
@@ -30,6 +31,8 @@ Route::get('/books/{book}', [BookController::class, 'show']);
 Route::get('/rating', [RatingController::class, 'show']);
 Route::post('/rating/store', [RatingController::class, 'store']);
 Route::post('/comment/store', [CommentController::class, 'store']);
+Route::get('/tags', [TagController::class, 'index']);
+
 Auth::routes();
 
 Route::get('/', [App\Http\Controllers\HomeController::class, 'index'])->name('home');

@@ -1,7 +1,7 @@
 let data;
 let base = window.location.protocol + "//" + window.location.host;
 let url = new URL("/books", base);
-const params = new Proxy(new URLSearchParams(window.location.search), {
+let params = new Proxy(new URLSearchParams(window.location.search), {
     get: (searchParams, prop) => searchParams.get(prop),
 });
 if (params.tag) {
@@ -10,8 +10,74 @@ if (params.tag) {
 if (params.page) {
     url.searchParams.set("page", params.page);
 }
+if (params.sort) {
+    url.searchParams.set("sort", params.sort);
+}
 //document ready function
 $(function () {
+    // prepare the data
+    var source = {
+        datatype: "json",
+        datafields: [
+            {
+                name: "name",
+            },
+            {
+                name: "id",
+            },
+        ],
+        url: "/tags",
+        async: false,
+    };
+    var dataAdapter = new $.jqx.dataAdapter(source);
+    // Create a jqxComboBox
+    $("#tags").jqxDropDownList({
+        selectedIndex: params.tag ? params.tag : 0,
+        source: dataAdapter,
+        displayMember: "name",
+        valueMember: "id",
+        theme: "light",
+        incrementalSearch: true,
+        searchMode: "startswithignorecase",
+        width: 200,
+        height: 30,
+    });
+    $("#tags").jqxDropDownList("insertAt", { name: "All", value: "all" }, 0);
+
+    // trigger the select event.
+    $("#tags").on("select", function () {
+        let id = $(this).jqxDropDownList("val");
+        if (id === "all") {
+            url.searchParams.delete("tag");
+            deleteUrlParam("tag");
+        } else {
+            let index = $(this).jqxDropDownList("getSelectedIndex");
+            insertUrlParam("tag", index);
+            url.searchParams.set("tag", id);
+        }
+        url.searchParams.delete("page");
+        deleteUrlParam("page");
+        sendRequest();
+    });
+    $("#sort").on("click", function () {
+        url.searchParams.delete("page");
+        deleteUrlParam("page");
+        if (params.sort) {
+            url.searchParams.delete("sort");
+            deleteUrlParam("sort");
+            sendRequest();
+            $("#sortHeader").text("Sort by avg ratings");
+            return;
+        }
+        url.searchParams.set("sort", true);
+        insertUrlParam("sort", true);
+        $("#sortHeader").text("Sorted by avg ratings");
+        sendRequest();
+    });
+    sendRequest();
+});
+//call ajax
+function sendRequest() {
     $.ajax({
         url: url,
         type: "get",
@@ -21,10 +87,13 @@ $(function () {
             createIndex(response);
             //laravel responded with the paginate object get the data from it
             data = response.data;
+            params = new Proxy(new URLSearchParams(window.location.search), {
+                get: (searchParams, prop) => searchParams.get(prop),
+            });
             init();
         },
     });
-});
+}
 //init function responsible for setting thing up
 function init() {
     $("#booksWindow").jqxWindow({
@@ -80,24 +149,40 @@ function init() {
             let page_url = new URL($(this).prop("href"));
             let page_no = page_url.searchParams.get("page");
             insertUrlParam("page", page_no);
-            $.ajax({
-                url: $(this).prop("href"),
-                type: "get",
-                dataType: "json",
-                success: function (response) {
-                    createIndex(response);
-                    data = response.data;
-                    init();
-                },
-            });
+            url.searchParams.set("page", page_no);
+            sendRequest();
+            return false;
         });
     });
+    // $(".tag-link").each(function () {
+    //     let link = $(this);
+    //     link.on("click", function (e) {
+    //         //stop the anchor from going to the href location. Instead use ajax to request and change the data
+    //         e.preventDefault();
+    //         insertUrlParam("tag", $(this).attr("data-tag"));
+    //         url.searchParams.set("page", $(this).attr("data-tag"));
+    //         sendRequest();
+    //     });
+    // });
 }
-function createUrl(key, value) {}
 function insertUrlParam(key, value) {
     if (history.pushState) {
         let searchParams = new URLSearchParams(window.location.search);
         searchParams.set(key, value);
+        let newurl =
+            window.location.protocol +
+            "//" +
+            window.location.host +
+            window.location.pathname +
+            "?" +
+            searchParams.toString();
+        window.history.pushState({ path: newurl }, "", newurl);
+    }
+}
+function deleteUrlParam(key) {
+    if (history.pushState) {
+        let searchParams = new URLSearchParams(window.location.search);
+        searchParams.delete(key);
         let newurl =
             window.location.protocol +
             "//" +
@@ -124,17 +209,34 @@ function _createElements(book) {
     let body = $("<div>").addClass("card-body");
     let title = $("<h5>").addClass("card-title").text(book.title);
     let description = $("<p>").addClass("card-text").text(book.description);
+    let tags = $("<div>").addClass("d-flex my-3");
+    book.tags.forEach((tag) => {
+        let span = $("<span>")
+            .addClass("py-1 badge rounded-pill text-bg-secondary me-2")
+            .text(tag.name);
+        let a = $("<a>")
+            .attr({
+                href: "#",
+                "data-tag": tag.id,
+                class: "tag-link",
+            })
+            .css("cursor", "pointer");
+        a.on("click", function (e) {
+            //stop the anchor from going to the href location. Instead use ajax to request and change the data
+            e.preventDefault();
+            $("#tags").val($(this).attr("data-tag"));
+            return false;
+        });
+        a.append(span);
+        tags.append(a);
+    });
     let button = $("<a>")
         .attr({
             href: "/books/" + book.id,
             class: "btn btn-primary",
         })
         .text("Read More");
-    button.on("click", () => {
-        var offset = $("#booksWindow").offset();
-        console.log(offset);
-    });
-    body.append(title, description, button);
+    body.append(title, description, tags, button);
     card.append(image, body);
     $("#booksWindow").jqxWindow("setContent", card);
 }

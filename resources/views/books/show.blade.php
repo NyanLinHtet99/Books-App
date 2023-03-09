@@ -12,16 +12,20 @@
                             <p class="card-text">{{ $book->description }}</p>
                         </div>
                         <div class="p-4">
-                            <div id="rating"></div> <span style="font-size: 0.8rem">Avg user rating</span>
+                            <div id="rating"></div> <span style="font-size: 0.8rem" class="fw-bold">Avg user
+                                rating</span>
                             <div id="userRating" data-book="{{ $book->id }}"></div>
-                            <span style="font-size: 0.8rem">Your rating</span>
+                            <span style="font-size: 0.8rem" class="fw-bold">Your rating</span>
                         </div>
-                        <ul class="list-group list-group-flush">
-                            @foreach ($book->tags as $tag)
-                                <li class="list-group-item"><a href="/?tag={{ $tag->id }}">{{ $tag->name }}</a>
-                                </li>
-                            @endforeach
-                        </ul>
+                        <div class="p-4">
+                            <h3 class="h5 fw-bold">Tags</h3>
+                            <div class="d-flex">
+                                @foreach ($book->tags as $tag)
+                                    <a href="/?tag={{ $tag->id }}"><span
+                                            class="py-1 px-2 badge rounded-pill text-bg-primary me-3">{{ $tag->name }}</span></a>
+                                @endforeach
+                            </div>
+                        </div>
                         <div class="card-body">
                             <form id="comment" method="POST" action="/comment/store">
                                 @csrf
@@ -36,38 +40,38 @@
                             <div class="accordion mt-4" id="accordionExample">
                                 <div class="accordion-item">
                                     <h2 class="accordion-header" id="headingOne">
-                                        <button class="accordion-button
-                                            @if (session('commented'))
-                                                collapsed
-                                            @endif
-                                            " type="button" data-bs-toggle="collapse"
-                                            data-bs-target="#collapseOne" aria-expanded="true" aria-controls="collapseOne">
+                                        <button
+                                            class="accordion-button
+                                            @if (session('commented')) collapsed @endif
+                                            "
+                                            type="button" data-bs-toggle="collapse" data-bs-target="#collapseOne"
+                                            aria-expanded="true" aria-controls="collapseOne">
                                             Comments
                                         </button>
                                     </h2>
-                                    <div id="collapseOne" class="accordion-collapse collapse
-                                    @if (session('commented'))
-                                        show
-                                    @endif
-                                    " aria-labelledby="headingOne"
-                                        data-bs-parent="#accordionExample">
+                                    <div id="collapseOne"
+                                        class="accordion-collapse collapse
+                                    @if (session('commented')) show @endif
+                                    "
+                                        aria-labelledby="headingOne" data-bs-parent="#accordionExample">
                                         <div class="accordion-body">
                                             @foreach ($book->comments as $comment)
                                                 <div class="d-flex flex-start mt-4">
                                                     <a class="me-3" href="#">
                                                         <img class="rounded-circle shadow-1-strong"
-                                                            src="{{ Storage::url('avatars/'. $comment->user->info->image) }}"
+                                                            src="{{ Storage::url('avatars/' . $comment->user->info->image) }}"
                                                             alt="avatar" width="65" height="65" />
                                                     </a>
                                                     <div class="flex-grow-1 flex-shrink-1">
                                                         <div>
                                                             <div class="d-flex justify-content-between align-items-center">
                                                                 <p class="mb-1">
-                                                                    {{ $comment->user->name }} <span class="small">- {{ $comment->created_at->diffForHumans() }}</span>
+                                                                    {{ $comment->user->name }} <span class="small">-
+                                                                        {{ $comment->created_at->diffForHumans() }}</span>
                                                                 </p>
                                                             </div>
                                                             <p class="small mb-0">
-                                                                {{$comment->body}}
+                                                                {{ $comment->body }}
                                                             </p>
                                                         </div>
                                                     </div>
