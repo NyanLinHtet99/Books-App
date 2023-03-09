@@ -92,6 +92,9 @@
         </nav>
 
         <main class="py-4">
+            @auth
+                <x-profile.window></x-profile.window>
+            @endauth
             @yield('content')
         </main>
     </div>

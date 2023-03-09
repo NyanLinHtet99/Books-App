@@ -1,5 +1,6 @@
 <?php
 
+use App\Http\Controllers\BookController;
 use App\Models\User;
 
 use App\Models\UserInfo;
@@ -22,10 +23,8 @@ use App\Models\Book;
 */
 
 Route::post('/user/update', [UserInfoController::class, 'update'])->name('user.update');
-Route::get('/books', function () {
-    $data = Book::paginate(15);
-    return json_encode($data);
-});
+Route::get('/books', [BookController::class, 'index']);
+Route::get('/books/{book}', [BookController::class, 'show']);
 
 Auth::routes();
 

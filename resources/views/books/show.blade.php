@@ -1,42 +1,28 @@
-@extends()
-<nav class="d-flex justify-items-center justify-content-between">
-    <div class="d-flex justify-content-between flex-fill d-sm-none">
-        <ul class="pagination">
-
-            <li class="page-item disabled" aria-disabled="true">
-                <span class="page-link">« Previous</span>
-            </li>
-
-
-            <li class="page-item">
-                <a class="page-link" href="http://127.0.0.1:8000?page=2" rel="next">Next »</a>
-            </li>
-        </ul>
-    </div>
-
-    <div class="d-none flex-sm-fill d-sm-flex align-items-sm-center justify-content-sm-between">
-        <div>
-            <p class="small text-muted">
-                Showing
-                <span class="fw-semibold">1</span>
-                to
-                <span class="fw-semibold">15</span>
-                of
-                <span class="fw-semibold">20</span>
-                results
-            </p>
-        </div>
-        <div>
-            <ul class="pagination">
-                <li class="page-item disabled" aria-disabled="true" aria-label="« Previous">
-                    <span class="page-link" aria-hidden="true">‹</span>
-                </li>
-                <li class="page-item active" aria-current="page"><span class="page-link">1</span></li>
-                <li class="page-item"><a class="page-link" href="http://127.0.0.1:8000?page=2">2</a></li>
-                <li class="page-item">
-                    <a class="page-link" href="http://127.0.0.1:8000?page=2" rel="next" aria-label="Next »">›</a>
-                </li>
-            </ul>
+@extends('layouts.app')
+@section('content')
+    <div class="container">
+        <div class="row justify-content-center">
+            <div class="col-8">
+                <div class="container">
+                    <div class="card" style="width: 18rem;">
+                        <img src="{{ Storage::url('books/' . $book->cover) }}" class="card-img-top" alt="cover art">
+                        <div class="card-body">
+                            <h5 class="card-title">{{ $book->title }}</h5>
+                            <p class="card-text">{{ $book->description }}</p>
+                        </div>
+                        <ul class="list-group list-group-flush">
+                            @foreach ($book->tags as $tag)
+                                <li class="list-group-item"><a href="/?tag={{ $tag->id }}">{{ $tag->name }}</a>
+                                </li>
+                            @endforeach
+                        </ul>
+                        <div class="card-body">
+                            <a href="#" class="card-link">Card link</a>
+                            <a href="#" class="card-link">Another link</a>
+                        </div>
+                    </div>
+                </div>
+            </div>
         </div>
     </div>
-</nav>
+@endsection

@@ -1,8 +1,19 @@
 let data;
+let base = window.location.protocol + "//" + window.location.host;
+let url = new URL("/books", base);
+const params = new Proxy(new URLSearchParams(window.location.search), {
+    get: (searchParams, prop) => searchParams.get(prop),
+});
+if (params.tag) {
+    url.searchParams.set("tag", params.tag);
+}
+if (params.page) {
+    url.searchParams.set("page", params.page);
+}
 //document ready function
 $(function () {
     $.ajax({
-        url: "/books",
+        url: url,
         type: "get",
         dataType: "json",
         success: function (response) {
@@ -66,6 +77,9 @@ function init() {
         link.on("click", function (e) {
             //stop the anchor from going to the href location. Instead use ajax to request and change the data
             e.preventDefault();
+            let page_url = new URL($(this).prop("href"));
+            let page_no = page_url.searchParams.get("page");
+            insertUrlParam("page", page_no);
             $.ajax({
                 url: $(this).prop("href"),
                 type: "get",
@@ -79,6 +93,22 @@ function init() {
         });
     });
 }
+function createUrl(key, value) {}
+function insertUrlParam(key, value) {
+    if (history.pushState) {
+        let searchParams = new URLSearchParams(window.location.search);
+        searchParams.set(key, value);
+        let newurl =
+            window.location.protocol +
+            "//" +
+            window.location.host +
+            window.location.pathname +
+            "?" +
+            searchParams.toString();
+        window.history.pushState({ path: newurl }, "", newurl);
+    }
+}
+
 //functions for creating books Window and finding the offset direction of it
 function _createElements(book) {
     //this create a bootstrap card which contian image,title,description and read more button
@@ -96,7 +126,7 @@ function _createElements(book) {
     let description = $("<p>").addClass("card-text").text(book.description);
     let button = $("<a>")
         .attr({
-            href: "#",
+            href: "/books/" + book.id,
             class: "btn btn-primary",
         })
         .text("Read More");
