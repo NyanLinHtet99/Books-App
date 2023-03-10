@@ -59,21 +59,37 @@ $(function () {
         deleteUrlParam("page");
         sendRequest();
     });
-    $("#sort").on("click", function () {
+    $("#sortByAvg").on("click", function () {
         url.searchParams.delete("page");
         deleteUrlParam("page");
         if (params.sort) {
             url.searchParams.delete("sort");
             deleteUrlParam("sort");
             sendRequest();
-            $("#sortHeader").text("Sort by avg ratings");
+            $("#sortByAvgHeader").text("Sort by avg ratings");
             return;
         }
-        url.searchParams.set("sort", true);
-        insertUrlParam("sort", true);
-        $("#sortHeader").text("Sorted by avg ratings");
+        url.searchParams.set("sort", "avg");
+        insertUrlParam("sort", "avg");
+        $("#sortByAvgHeader").text("Sorted by avg ratings");
         sendRequest();
     });
+    $("#sortByTime").on("click", function () {
+        url.searchParams.delete("page");
+        deleteUrlParam("page");
+        if (params.sort) {
+            url.searchParams.delete("sort");
+            deleteUrlParam("sort");
+            sendRequest();
+            $("#sortByTimeHeader").text("Sort by time");
+            return;
+        }
+        url.searchParams.set("sort", "time");
+        insertUrlParam("sort", "time");
+        $("#sortByTimeHeader").text("Sorted by time");
+        sendRequest();
+    });
+
     sendRequest();
 });
 //call ajax
@@ -153,6 +169,13 @@ function init() {
             sendRequest();
             return false;
         });
+    });
+    $("#search").jqxComboBox({
+        source: data,
+        displayMember: "name",
+        valueMember: "id",
+        width: 200,
+        height: 30,
     });
     // $(".tag-link").each(function () {
     //     let link = $(this);

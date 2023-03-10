@@ -29,18 +29,22 @@ class Book extends Model
         $query->when($filter['tag'] ?? false, function ($query, $tag) {
             $query
                 ->whereHas('tags', function (Builder $query) use ($tag) {
-                    $query->where('tags.id', $tag)->orderBy('books.id');
+                    $query->where('tags.id', $tag)->orderByDesc('created_at');
                 });
         });
-        $query->when($filter['sort'] ?? false, function ($query) {
-            $query
-                ->select(
-                    'books.*',
-                    DB::raw('AVG(ratings.value) as averagerating')
-                )
-                ->leftJoin('ratings', 'ratings.book_id', 'books.id')
-                ->orderByDesc('averagerating')
-                ->groupBy('books.id');
+        $query->when($filter['sort'] ?? false, function ($query, $sort) {
+            if ($sort === 'avg') {
+                $query
+                    ->select(
+                        'books.*',
+                        DB::raw('AVG(ratings.value) as averagerating')
+                    )
+                    ->leftJoin('ratings', 'ratings.book_id', 'books.id')
+                    ->orderByDesc('averagerating')
+                    ->groupBy('books.id');
+            } elseif ($sort === 'time') {
+                $query->latest();
+            }
         });
         // ->whereHas('ratings', function (Builder $query) {
         //     $query->select('books.*', DB::raw('AVG(ratings.value) as avg'))
