@@ -18,6 +18,12 @@ class BookController extends Controller
         // $books = Book::whereHas('tags', function (Builder $query) use ($tag) {
         //     $query->where('tags.id', $tag);
         // })->paginate(16);
+        if(request('sort')){
+            $books->orderByDesc('averagerating');
+        }
+        else{
+            $books->orderByDesc('created_at');
+        }
         return json_encode($books->paginate(16));
     }
     public function show(Book $book)
@@ -25,5 +31,9 @@ class BookController extends Controller
         return view('books.show', [
             'book' => $book,
         ]);
+    }
+    public function getTitles(){
+        $books = Book::orderBy('title')->select('title','id')->get();
+        return json_encode($books);
     }
 }

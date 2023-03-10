@@ -28,6 +28,7 @@ use App\Models\Book;
 Route::post('/user/update', [UserInfoController::class, 'update'])->name('user.update');
 Route::get('/books', [BookController::class, 'index']);
 Route::get('/books/{book}', [BookController::class, 'show']);
+Route::get('/titles', [BookController::class, 'getTitles']);
 Route::get('/rating', [RatingController::class, 'show']);
 Route::post('/rating/store', [RatingController::class, 'store']);
 Route::post('/comment/store', [CommentController::class, 'store']);

@@ -1,3 +1,4 @@
+
 let data;
 let base = window.location.protocol + "//" + window.location.host;
 let url = new URL("/books", base);
@@ -59,37 +60,52 @@ $(function () {
         deleteUrlParam("page");
         sendRequest();
     });
-    $("#sortByAvg").on("click", function () {
+    $("#sort").on("click", function () {
         url.searchParams.delete("page");
         deleteUrlParam("page");
         if (params.sort) {
             url.searchParams.delete("sort");
             deleteUrlParam("sort");
             sendRequest();
-            $("#sortByAvgHeader").text("Sort by avg ratings");
+            $("#sortHeader").text("Sort by avg ratings");
             return;
         }
-        url.searchParams.set("sort", "avg");
-        insertUrlParam("sort", "avg");
-        $("#sortByAvgHeader").text("Sorted by avg ratings");
+        url.searchParams.set("sort", true);
+        insertUrlParam("sort", true);
+        $("#sortHeader").text("Sorted by avg ratings");
         sendRequest();
     });
-    $("#sortByTime").on("click", function () {
-        url.searchParams.delete("page");
-        deleteUrlParam("page");
-        if (params.sort) {
-            url.searchParams.delete("sort");
-            deleteUrlParam("sort");
-            sendRequest();
-            $("#sortByTimeHeader").text("Sort by time");
-            return;
-        }
-        url.searchParams.set("sort", "time");
-        insertUrlParam("sort", "time");
-        $("#sortByTimeHeader").text("Sorted by time");
-        sendRequest();
-    });
+    var nameSource =
+    {
+        datatype: "json",
+        datafields: [
+            {
+                name: "title",
+            },
+            {
+                name: "id",
+            },
+        ],
+        url: "/titles",
+        async: false,
+    };
+    var nameDataAdapter = new $.jqx.dataAdapter(nameSource);
 
+    $("#search").jqxComboBox({
+        source: nameDataAdapter,
+        displayMember: "title",
+        valueMember: 'id',
+        theme: 'light',
+        width: '30%',
+    });
+    $("#search").jqxComboBox('val', params.search ? params.search : null);
+    $('#searchButton').on('click',function(){
+        deleteUrlParam('page');
+        url.searchParams.delete('page');
+        insertUrlParam('search',$('#search').jqxComboBox('val'));
+        url.searchParams.set('search',$('#search').jqxComboBox('val'));
+        sendRequest();
+    });
     sendRequest();
 });
 //call ajax
@@ -170,13 +186,7 @@ function init() {
             return false;
         });
     });
-    $("#search").jqxComboBox({
-        source: data,
-        displayMember: "name",
-        valueMember: "id",
-        width: 200,
-        height: 30,
-    });
+
     // $(".tag-link").each(function () {
     //     let link = $(this);
     //     link.on("click", function (e) {
