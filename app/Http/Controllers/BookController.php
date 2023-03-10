@@ -14,14 +14,13 @@ class BookController extends Controller
         //     $query->where('content', 'like', 'code%');
         // })->get();
         $tag = request("tag");
-        $books = Book::with('tags')->filter(request(['tag', 'sort']));
+        $books = Book::with('tags')->filter(request(['tag', 'sort', 'search']));
         // $books = Book::whereHas('tags', function (Builder $query) use ($tag) {
         //     $query->where('tags.id', $tag);
         // })->paginate(16);
-        if(request('sort')){
+        if (request('sort')) {
             $books->orderByDesc('averagerating');
-        }
-        else{
+        } else {
             $books->orderByDesc('created_at');
         }
         return json_encode($books->paginate(16));
@@ -32,8 +31,9 @@ class BookController extends Controller
             'book' => $book,
         ]);
     }
-    public function getTitles(){
-        $books = Book::orderBy('title')->select('title','id')->get();
+    public function getTitles()
+    {
+        $books = Book::orderBy('title')->select('title', 'id')->get();
         return json_encode($books);
     }
 }

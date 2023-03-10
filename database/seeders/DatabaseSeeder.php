@@ -37,10 +37,13 @@ class DatabaseSeeder extends Seeder
                 // $book->comments = Comment::factory()->create([
                 //     'user_id' => $user->id,
                 // ]);
-                $book->ratings()->save(Rating::factory()->create([
-                    'user_id' => $user->id,
-                ]));
-                $book->save();
+                Rating::factory()->for($user)->for($book)->create();
+                Comment::factory()->for($user)->for($book)->create();
+                // $book->hasRatings([
+                //     'user_id' => $user->id
+                // ])->hasComments([
+                //     'user_id' => $user->id,
+                // ]);
             }
             $count = rand(2, 5);
             for ($j = 0; $j < $count; $j++) {

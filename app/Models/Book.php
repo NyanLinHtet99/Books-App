@@ -9,6 +9,8 @@ use Illuminate\Database\Eloquent\Relations\HasMany;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Relations\BelongsToMany;
 
+use function PHPSTORM_META\type;
+
 class Book extends Model
 {
     use HasFactory;
@@ -27,16 +29,15 @@ class Book extends Model
     public function scopeFilter($query, array $filter)
     {
         $query->when($filter['search'] ?? false, function ($query, $search) {
-            if(typeOf($search)=='int'){
+            if (preg_match("/[a-z]/i", $search)) {
                 $query
-                ->where(
-                    fn($query)=>
-                        $query->where('title','like','%'.strtolower($search).'%')
-                        ->orWhere('description','like','%'.strtolower($search).'%')
-                );
-            }
-            else{
-                $query->where('id',$search);
+                    ->where(
+                        fn ($query) =>
+                        $query->where('title', 'like', '%' . strtolower($search) . '%')
+                            ->orWhere('description', 'like', '%' . strtolower($search) . '%')
+                    );
+            } else {
+                $query->where('id', $search);
             }
         });
         $query->when($filter['tag'] ?? false, function ($query, $tag) {
@@ -47,14 +48,13 @@ class Book extends Model
         });
         $query->when($filter['sort'] ?? false, function ($query) {
 
-                $query
-                    ->select(
-                        'books.*',
-                        DB::raw('AVG(ratings.value) as averagerating')
-                    )
-                    ->leftJoin('ratings', 'ratings.book_id', 'books.id')
-                    ->groupBy('books.id');
-
+            $query
+                ->select(
+                    'books.*',
+                    DB::raw('AVG(ratings.value) as averagerating')
+                )
+                ->leftJoin('ratings', 'ratings.book_id', 'books.id')
+                ->groupBy('books.id');
         });
 
         // ->whereHas('ratings', function (Builder $query) {
