@@ -18,6 +18,10 @@ class Book extends Model
     {
         return $this->belongsToMany(Tag::class);
     }
+    public function user()
+    {
+        return $this->belongsTo(User::class);
+    }
     public function comments(): HasMany
     {
         return $this->hasMany(Comment::class)->orderByDesc('created_at');

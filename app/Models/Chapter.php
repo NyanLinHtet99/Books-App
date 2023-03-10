@@ -8,7 +8,9 @@ use Illuminate\Database\Eloquent\Model;
 class Chapter extends Model
 {
     use HasFactory;
-    public function book(){
+    protected $with = ['book'];
+    public function book()
+    {
         return $this->belongsTo(Book::class);
     }
 }

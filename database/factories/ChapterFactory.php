@@ -18,8 +18,8 @@ class ChapterFactory extends Factory
     public function definition(): array
     {
         return [
-            'title' => fake()->word(),
-            'body'=> fake()->paragraph(),
+            'title' => fake()->word(4),
+            'body' => fake()->paragraph(100),
             'number' => 0,
             'book_id' => Book::factory(),
         ];

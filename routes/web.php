@@ -1,6 +1,7 @@
 <?php
 
 use App\Http\Controllers\BookController;
+use App\Http\Controllers\ChapterController;
 use App\Http\Controllers\CommentController;
 use App\Http\Controllers\RatingController;
 use App\Http\Controllers\TagController;
@@ -28,6 +29,7 @@ use App\Models\Book;
 Route::post('/user/update', [UserInfoController::class, 'update'])->name('user.update');
 Route::get('/books', [BookController::class, 'index']);
 Route::get('/books/{book}', [BookController::class, 'show']);
+Route::get('/chapters/{chapter}', [ChapterController::class, 'show']);
 Route::get('/titles', [BookController::class, 'getTitles']);
 Route::get('/rating', [RatingController::class, 'show']);
 Route::post('/rating/store', [RatingController::class, 'store']);
