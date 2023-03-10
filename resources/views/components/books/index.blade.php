@@ -6,8 +6,11 @@
         <i class="fa-solid fa-arrow-down-wide-short grow" id="sort"></i>
     </div>
     <div class="d-flex align-items-center my-2">
-        <div id="search"></div>
+        <div id="search" style="min-width: 200px"></div >
         <button class="btn btn-success btn-sm ms-2" id="searchButton">Search</button>
+        <div class="spinner-border ms-auto d-none" id="spin" role="status">
+            <span class="visually-hidden">Loading...</span>
+          </div>
     </div>
     <div class="row gx-3 mt-3" id="booksRow"></div>
     <div id="nav"></div>

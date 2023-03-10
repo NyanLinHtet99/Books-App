@@ -87,41 +87,59 @@ $(function () {
             },
         ],
         url: "/titles",
-        async: false,
     };
     var nameDataAdapter = new $.jqx.dataAdapter(nameSource);
-
+    // $("#search").jqxInput({
+    //     source: nameDataAdapter,
+    //     placeHolder: "Enter your search",
+    //     displayMember: "title",
+    //     valueMember: 'id',
+    //     theme: 'light',
+    //     width: '30%',
+    // });
     $("#search").jqxComboBox({
+        autoComplete: true,
+        searchMode: 'contains',
         source: nameDataAdapter,
         displayMember: "title",
-        valueMember: 'id',
+        valueMember: "id",
         theme: 'light',
-        width: '30%',
+        width: '40%',
     });
-    $("#search").jqxComboBox('val', params.search ? params.search : null);
-    $('#searchButton').on('click',function(){
+
+    $('#searchButton').on('click', function () {
         deleteUrlParam('page');
         url.searchParams.delete('page');
-        insertUrlParam('search',$('#search').jqxComboBox('val'));
-        url.searchParams.set('search',$('#search').jqxComboBox('val'));
+        if ($('#search').jqxComboBox('val') === '') {
+            deleteUrlParam('search');
+            url.searchParams.delete('search');
+            sendRequest();
+            return;
+        }
+        insertUrlParam('search', $('#search').jqxComboBox('val'));
+        url.searchParams.set('search', $('#search').jqxComboBox('val'));
         sendRequest();
     });
     sendRequest();
 });
 //call ajax
 function sendRequest() {
+    $('#spin').removeClass('d-none');
     $.ajax({
         url: url,
         type: "get",
         dataType: "json",
         success: function (response) {
             //create books grid and pagination links
+            $('#spin').addClass('d-none');
             createIndex(response);
             //laravel responded with the paginate object get the data from it
             data = response.data;
             params = new Proxy(new URLSearchParams(window.location.search), {
                 get: (searchParams, prop) => searchParams.get(prop),
             });
+            $("#search").jqxComboBox('val', params.search ? params.search : null);
+
             init();
         },
     });

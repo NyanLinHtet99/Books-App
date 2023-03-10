@@ -26,6 +26,10 @@ class Book extends Model
     {
         return $this->hasMany(Rating::class);
     }
+    public function chapters(): HasMany
+    {
+        return $this->hasMany(Chapter::class)->orderByDesc('number');
+    }
     public function scopeFilter($query, array $filter)
     {
         $query->when($filter['search'] ?? false, function ($query, $search) {
@@ -37,7 +41,7 @@ class Book extends Model
                             ->orWhere('description', 'like', '%' . strtolower($search) . '%')
                     );
             } else {
-                $query->where('id', $search);
+                $query->where('books.id', $search);
             }
         });
         $query->when($filter['tag'] ?? false, function ($query, $tag) {

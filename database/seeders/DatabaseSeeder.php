@@ -5,6 +5,7 @@ namespace Database\Seeders;
 // use Illuminate\Database\Console\Seeds\WithoutModelEvents;
 
 use App\Models\Book;
+use App\Models\Chapter;
 use App\Models\Comment;
 use App\Models\Rating;
 use App\Models\Tag;
@@ -47,6 +48,9 @@ class DatabaseSeeder extends Seeder
             }
             $count = rand(2, 5);
             for ($j = 0; $j < $count; $j++) {
+                Chapter::factory()->for($book)->create([
+                    'number' => ($j+1),
+                ]);
                 $book->tags()->attach(rand(1, 10));
             }
         }

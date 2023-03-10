@@ -39,48 +39,29 @@
 
                             <div class="accordion mt-4" id="accordionExample">
                                 <div class="accordion-item">
-                                    <h2 class="accordion-header" id="headingOne">
-                                        <button
-                                            class="accordion-button
-                                            @if (session('commented')) collapsed @endif
-                                            "
-                                            type="button" data-bs-toggle="collapse" data-bs-target="#collapseOne"
-                                            aria-expanded="true" aria-controls="collapseOne">
-                                            Comments
+                                    <h2 class="accordion-header" id="headingTwo">
+                                        <button class="accordion-button collapsed"
+                                            type="button" data-bs-toggle="collapse" data-bs-target="#collapseTwo"
+                                            aria-expanded="true" aria-controls="collapseTwo">
+                                            Chapters
                                         </button>
                                     </h2>
-                                    <div id="collapseOne"
-                                        class="accordion-collapse collapse
-                                    @if (session('commented')) show @endif
-                                    "
-                                        aria-labelledby="headingOne" data-bs-parent="#accordionExample">
-                                        <div class="accordion-body">
-                                            @foreach ($book->comments as $comment)
-                                                <div class="d-flex flex-start mt-4">
-                                                    <a class="me-3" href="#">
-                                                        <img class="rounded-circle shadow-1-strong"
-                                                            src="{{ Storage::url('avatars/' . $comment->user->info->image) }}"
-                                                            alt="avatar" width="65" height="65" />
-                                                    </a>
-                                                    <div class="flex-grow-1 flex-shrink-1">
-                                                        <div>
-                                                            <div class="d-flex justify-content-between align-items-center">
-                                                                <p class="mb-1">
-                                                                    {{ $comment->user->name }} <span class="small">-
-                                                                        {{ $comment->created_at->diffForHumans() }}</span>
-                                                                </p>
-                                                            </div>
-                                                            <p class="small mb-0">
-                                                                {{ $comment->body }}
-                                                            </p>
-                                                        </div>
-                                                    </div>
-                                                </div>
-                                                <hr class="mt-4">
-                                            @endforeach
-                                        </div>
+                                    <div id="collapseTwo"
+                                    class="accordion-collapse collapse show"
+                                    aria-labelledby="headingTwo" data-bs-parent="#accordionExample">
+                                    <div class="accordion-body">
+                                        <ul class="list-group">
+                                                @foreach ($book->chapters as $chapter)
+                                                    <li class="list-group-item">
+                                                        <strong class="me-3">Chapter - {{ $chapter->number }}</strong> {{ $chapter->title }}
+                                                    </li>
+                                                    @endforeach
+                                                </ul>
+
+                                            </div>
                                     </div>
                                 </div>
+                                <x-comments :book="$book"></x-comments>
                             </div>
 
                         </div>
