@@ -5,21 +5,20 @@
             <div class="col-10">
                 <div class="card p-4">
                     <div class="mx-auto my-4">
-                        <img src="{{ Storage::url('books/'.$book->cover) }}" class="" alt="cover art"
+                        <img src="{{ Storage::url('books/default.jpg') }}" class="" alt="cover art"
                             style="max-width: 200px" id="cover">
                         <i class="fas fa-edit grow" id="coverEdit"></i>
                     </div>
-                    <form action="/books/{{ $book->id }}" method="POST" enctype="multipart/form-data">
+                    <form action="/books/store" method="POST" enctype="multipart/form-data">
                         @csrf
-                        @method('PUT')
                         <input type="file" name="cover" id="inputCover" hidden>
                         <div class="mb-4">
-                            <input type="text" name="title" id="title" required value="{{ $book->title }}">
+                            <input type="text" name="title" id="title" required>
                         </div>
                         <textarea name="description" id="description" placeholder="Book's description" class="fs-5 w-100">
-                            {!! $book->description !!}
+                            Enter a short description of your book
                         </textarea>
-                        <button class="mt-2 btn btn-success ">Submit</button>
+                        <button class="mt-2 btn btn-success" >Submit</button>
                     </form>
                 </div>
 

@@ -3,12 +3,26 @@
     <div class="container">
         <div class="row justify-content-center">
             <div class="col-8">
+                <div class="alert alert-danger d-none" role="alert" id="alert">
+                    You are not authorize to do this action.
+                </div>
+                @if ($book->user_id === auth()->user()->id)
+                    <div class="d-flex justify-content-end align-items-center" style="cursor: pointer" id="deleteBook"
+                        data-id="{{ $book->id }}">
+                        <span class="me-2 text-danger">DELETE</span> <i class="fa-solid fa-xmark grow"></i>
+                    </div>
+                    <div class="d-flex justify-content-end align-items-center" style="cursor: pointer">
+                        <a href="/books/{{ $book->id }}/edit" style="text-decoration: none; color:inherit;"><span
+                                class="me-2 text-info">Edit</span> <i
+                                class="fa-sharp fa-solid fa-pen-to-square grow"></i></a>
+                    </div>
+                @endif
                 <div class="card">
                     <img src="{{ Storage::url('books/' . $book->cover) }}" class="card-img-top mx-auto mt-3" alt="cover art"
                         style="max-width: 400px">
                     <div class="card-body mt-3">
                         <h5 class="card-title fw-bold">{{ $book->title }}</h5>
-                        <p class="card-text">{{ $book->description }}</p>
+                        <p class="card-text">{!! $book->description !!}</p>
                     </div>
                     <div class="p-4">
                         <div id="rating"></div> <span style="font-size: 0.8rem" class="fw-bold">Avg user
@@ -47,12 +61,21 @@
                                     data-bs-parent="#accordionExample">
                                     <div class="accordion-body">
                                         <ul class="list-group">
+                                            @if ($book->user->id === auth()->user()->id)
+                                                <a href="" class="list-group-item list-group-item-action bg-primary"
+                                                    style="color:white; text-align: center">Add Chapter</a>
+                                            @endif
                                             @foreach ($book->chapters as $chapter)
-                                                <a href="/chapters/{{ $chapter->id }}"
-                                                    class="list-group-item list-group-item-action" style="cursor: pointer;">
-                                                    <strong class="me-3">Chapter - {{ $chapter->number }}</strong>
-                                                    {{ $chapter->title }}
-                                                </a>
+                                                <div class="d-flex mb-2">
+                                                    <a href="/chapters/{{ $chapter->id }}"
+                                                        class="list-group-item list-group-item-action" style="cursor: pointer;width: 90%">
+                                                        <strong class="me-3">Chapter - {{ $chapter->number }}</strong>
+                                                        {{ $chapter->title }}
+                                                    </a>
+                                                    <a href="/chapters/{{ $chaper->id }}/delete" class="btn btn-danger mx-2">DELETE</a>
+                                                    <a href="/chapters/{{ $chaper->id }}/edit" class="btn btn-info">EDIT</a>
+                                                </div>
+
                                             @endforeach
                                         </ul>
 
@@ -76,7 +99,19 @@
                 }
             });
             init();
-
+            $('#deleteBook').on('click', function() {
+                $.ajax({
+                    url: '/books/' + $(this).attr('data-id'),
+                    type: 'DELETE',
+                    success: function(response) {
+                        if (response) {
+                            window.location.href = '/';
+                        } else {
+                            $('#alert').removeClass('d-none');
+                        }
+                    }
+                });
+            });
         });
         $('#userRating').on('change', function(e) {
             $.ajax({

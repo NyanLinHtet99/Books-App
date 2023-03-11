@@ -20,7 +20,7 @@
                         style="text-align: justify;
                     text-justify: inter-word;
                     text-indent: 4rem">
-                        {{ $chapter->body }}
+                        {!! $chapter->body !!}
                     </p>
 
                 </article>

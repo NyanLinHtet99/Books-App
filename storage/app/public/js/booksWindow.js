@@ -259,7 +259,7 @@ function _createElements(book) {
     image.css("width", "200px");
     let body = $("<div>").addClass("card-body");
     let title = $("<h5>").addClass("card-title").text(book.title);
-    let description = $("<p>").addClass("card-text").text(book.description);
+    let description = $("<p>").append(book.description).addClass("card-text");
     let tags = $("<div>").addClass("d-flex my-3");
     book.tags.forEach((tag) => {
         let span = $("<span>")

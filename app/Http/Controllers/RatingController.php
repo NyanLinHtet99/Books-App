@@ -12,9 +12,12 @@ class RatingController extends Controller
     public function show()
     {
         $query = Rating::where('book_id', request('book_id'));
+        $avg = 0;
         $count = $query->count();
-        $sum = $query->sum('value');
-        $avg = ceil($sum / $count);
+        if ($count > 0) {
+            $sum = $query->sum('value');
+            $avg = ceil($sum / $count);
+        }
         $user_rating = $query->where('user_id', auth()->user()->id)->first();
         $data = [
             'avg_rating' => $avg,
@@ -26,7 +29,7 @@ class RatingController extends Controller
     {
         $arrgs = request()->validate([
             'value' => 'required|integer',
-            'book_id' => 'required'
+            'book_id' => 'required',
         ]);
         $rating = Rating::firstOrNew([
             'book_id' => request('book_id'),

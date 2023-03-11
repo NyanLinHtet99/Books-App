@@ -9,6 +9,7 @@ class Chapter extends Model
 {
     use HasFactory;
     protected $with = ['book'];
+    protected $guarded = [];
     public function book()
     {
         return $this->belongsTo(Book::class);
