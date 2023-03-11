@@ -28,6 +28,7 @@ use App\Models\Book;
 
 Route::post('/user/update', [UserInfoController::class, 'update'])->name('user.update');
 Route::get('/books', [BookController::class, 'index']);
+Route::get('/books/create', [BookController::class, 'create']);
 Route::get('/books/{book}', [BookController::class, 'show']);
 Route::get('/chapters/{chapter}', [ChapterController::class, 'show']);
 Route::get('/titles', [BookController::class, 'getTitles']);

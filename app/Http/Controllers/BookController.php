@@ -31,6 +31,10 @@ class BookController extends Controller
             'book' => $book,
         ]);
     }
+    public function create()
+    {
+        return view('books.edit');
+    }
     public function getTitles()
     {
         $books = Book::orderBy('title')->select('title', 'id')->get();
