@@ -1,18 +1,28 @@
-
 let data;
-let base = window.location.protocol + "//" + window.location.host;
-let url = new URL("/books", base);
-let params = new Proxy(new URLSearchParams(window.location.search), {
-    get: (searchParams, prop) => searchParams.get(prop),
-});
-if (params.tag) {
-    url.searchParams.set("tag", params.tag);
+let urlData = {
+    tags: [],
+};
+let params = new URLSearchParams(window.location.search);
+URLSearchParams.prototype.remove = function (key, value) {
+    const entries = this.getAll(key);
+    const newEntries = entries.filter((entry) => entry !== value);
+    this.delete(key);
+    newEntries.forEach((newEntry) => this.append(key, newEntry));
+};
+// let params = new Proxy(new URLSearchParams(window.location.search), {
+//     get: (searchParams, prop) => searchParams.get(prop),
+// });
+// if (params.get("tags")) {
+//     urlData["tags"] = params.getAll("tags");
+// }
+if (params.get("page")) {
+    urlData["page"] = params.get("page");
 }
-if (params.page) {
-    url.searchParams.set("page", params.page);
+if (params.get("sort")) {
+    urlData["sort"] = params.get("sort");
 }
-if (params.sort) {
-    url.searchParams.set("sort", params.sort);
+if (params.get("search")) {
+    urlData["search"] = params.get("search");
 }
 //document ready function
 $(function () {
@@ -33,7 +43,7 @@ $(function () {
     var dataAdapter = new $.jqx.dataAdapter(source);
     // Create a jqxComboBox
     $("#tags").jqxDropDownList({
-        selectedIndex: params.tag ? params.tag : 0,
+        selectedIndex: 0,
         source: dataAdapter,
         displayMember: "name",
         valueMember: "id",
@@ -43,47 +53,52 @@ $(function () {
         width: 200,
         height: 30,
     });
-    $("#tags").jqxDropDownList("insertAt", { name: "All", value: "all" }, 0);
+    $("#tags").jqxDropDownList("insertAt", { name: "All", id: "all" }, 0);
 
     // trigger the select event.
-    $("#tags").on("select", function () {
+    $("#tags").on("select", function (e) {
         let id = $(this).jqxDropDownList("val");
         if (id === "all") {
-            url.searchParams.delete("tag");
-            deleteUrlParam("tag");
+            urlData["tags"] = [];
+            deleteUrlParam("tags");
+            $("#tagsContainer > div.tag").remove();
+        } else if (urlData.tags.includes(id)) {
+            return;
         } else {
             let index = $(this).jqxDropDownList("getSelectedIndex");
-            insertUrlParam("tag", index);
-            url.searchParams.set("tag", id);
+            insertUrlParam("tags", index);
+            urlData["tags"].push(id);
+            createTags(e.args.item.label, id, index);
         }
-        url.searchParams.delete("page");
+        delete urlData["page"];
         deleteUrlParam("page");
         sendRequest();
     });
+    if (params.getAll("tags")) {
+        params.getAll("tags").forEach((tag) => {
+            $("#tags").jqxDropDownList("selectIndex", tag);
+        });
+    }
     $("#sort").on("click", function () {
-        url.searchParams.delete("page");
+        delete urlData["page"];
         deleteUrlParam("page");
-        if (params.sort) {
-            url.searchParams.delete("sort");
+        if (params.get("sort")) {
+            delete urlData["sort"];
             deleteUrlParam("sort");
             sendRequest();
             $("#sortHeader").text("Sort by avg ratings");
             return;
         }
-        url.searchParams.set("sort", true);
+        urlData["sort"] = true;
         insertUrlParam("sort", true);
         $("#sortHeader").text("Sorted by avg ratings");
         sendRequest();
     });
-    var nameSource =
-    {
+    var nameSource = {
         datatype: "json",
         datafields: [
             {
                 name: "title",
-            },
-            {
-                name: "id",
             },
         ],
         url: "/titles",
@@ -99,46 +114,47 @@ $(function () {
     // });
     $("#search").jqxComboBox({
         autoComplete: true,
-        searchMode: 'contains',
+        searchMode: "contains",
         source: nameDataAdapter,
         displayMember: "title",
-        valueMember: "id",
-        theme: 'light',
-        width: '40%',
+        theme: "light",
+        width: "40%",
     });
 
-    $('#searchButton').on('click', function () {
-        deleteUrlParam('page');
-        url.searchParams.delete('page');
-        if ($('#search').jqxComboBox('val') === '') {
-            deleteUrlParam('search');
-            url.searchParams.delete('search');
+    $("#searchButton").on("click", function () {
+        deleteUrlParam("page");
+        delete urlData["page"];
+        if ($("#search").jqxComboBox("val") == "") {
+            deleteUrlParam("search");
+            delete urlData["search"];
             sendRequest();
             return;
         }
-        insertUrlParam('search', $('#search').jqxComboBox('val'));
-        url.searchParams.set('search', $('#search').jqxComboBox('val'));
+        insertUrlParam("search", $("#search").jqxComboBox("val"));
+        urlData["search"] = $("#search").jqxComboBox("val");
         sendRequest();
     });
     sendRequest();
 });
 //call ajax
 function sendRequest() {
-    $('#spin').removeClass('d-none');
+    $("#spin").removeClass("d-none");
     $.ajax({
-        url: url,
+        url: "/books/",
+        data: urlData,
         type: "get",
         dataType: "json",
         success: function (response) {
             //create books grid and pagination links
-            $('#spin').addClass('d-none');
+            $("#spin").addClass("d-none");
             createIndex(response);
             //laravel responded with the paginate object get the data from it
             data = response.data;
-            params = new Proxy(new URLSearchParams(window.location.search), {
-                get: (searchParams, prop) => searchParams.get(prop),
-            });
-            $("#search").jqxComboBox('val', params.search ? params.search : null);
+            params = new URLSearchParams(window.location.search);
+            $("#search").jqxComboBox(
+                "val",
+                params.get("search") ? params.get("search") : null
+            );
 
             init();
         },
@@ -199,7 +215,7 @@ function init() {
             let page_url = new URL($(this).prop("href"));
             let page_no = page_url.searchParams.get("page");
             insertUrlParam("page", page_no);
-            url.searchParams.set("page", page_no);
+            urlData["page"] = page_no;
             sendRequest();
             return false;
         });
@@ -219,7 +235,9 @@ function init() {
 function insertUrlParam(key, value) {
     if (history.pushState) {
         let searchParams = new URLSearchParams(window.location.search);
-        searchParams.set(key, value);
+        if (key === "tags") {
+            searchParams.append(key, value);
+        } else searchParams.set(key, value);
         let newurl =
             window.location.protocol +
             "//" +
@@ -234,6 +252,23 @@ function deleteUrlParam(key) {
     if (history.pushState) {
         let searchParams = new URLSearchParams(window.location.search);
         searchParams.delete(key);
+        let newurl =
+            window.location.protocol +
+            "//" +
+            window.location.host +
+            window.location.pathname +
+            "?" +
+            searchParams.toString();
+        window.history.pushState({ path: newurl }, "", newurl);
+    }
+}
+function deleteUrlParamKeyValue(key, value) {
+    if (history.pushState) {
+        let searchParams = new URLSearchParams(window.location.search);
+        const entries = searchParams.getAll(key);
+        const newEntries = entries.filter((entry) => parseInt(entry) !== value);
+        searchParams.delete(key);
+        newEntries.forEach((newEntry) => searchParams.append(key, newEntry));
         let newurl =
             window.location.protocol +
             "//" +
@@ -416,4 +451,21 @@ function createBooks(data, i) {
     a.append(content);
     div.append(a);
     return div;
+}
+function createTags(label, id, index) {
+    let div = $("<div>").addClass("position-relative px-2 tag");
+    let span = $("<span>")
+        .addClass("py-1 px-2 badge rounded-pill text-bg-primary")
+        .text(label);
+    let i = $("<i>").addClass(
+        "fa-solid fa-circle-xmark position-absolute top-0 end-0 grow"
+    );
+    div.on("click", function () {
+        deleteUrlParamKeyValue("tags", index);
+        urlData.tags = urlData.tags.filter((item) => item !== id);
+        $(this).remove();
+        sendRequest();
+    });
+    div.append(span, i);
+    $("#tagsContainer").append(div);
 }

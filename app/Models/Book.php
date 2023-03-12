@@ -38,22 +38,20 @@ class Book extends Model
     public function scopeFilter($query, array $filter)
     {
         $query->when($filter['search'] ?? false, function ($query, $search) {
-            if (preg_match("/[a-z]/i", $search)) {
-                $query
-                    ->where(
-                        fn ($query) =>
-                        $query->where('title', 'like', '%' . strtolower($search) . '%')
-                            ->orWhere('description', 'like', '%' . strtolower($search) . '%')
-                    );
-            } else {
-                $query->where('books.id', $search);
-            }
-        });
-        $query->when($filter['tag'] ?? false, function ($query, $tag) {
             $query
-                ->whereHas('tags', function (Builder $query) use ($tag) {
-                    $query->where('tags.id', $tag);
-                });
+                ->where(
+                    fn ($query) =>
+                    $query->where('title', 'LIKE', '%' . strtolower($search) . '%')
+                        ->orWhere('description', 'LIKE', '%' . strtolower($search) . '%')
+                );
+        });
+        $query->when($filter['tags'] ?? false, function ($query, $tags) {
+            foreach ($tags as $tag) {
+                $query
+                    ->whereHas('tags', function (Builder $query) use ($tag) {
+                        $query->where('tags.id', $tag);
+                    });
+            }
         });
         $query->when($filter['sort'] ?? false, function ($query) {
 

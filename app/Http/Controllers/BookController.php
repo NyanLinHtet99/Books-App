@@ -3,6 +3,7 @@
 namespace App\Http\Controllers;
 
 use App\Models\Book;
+use App\Models\Tag;
 use App\Models\User;
 use Illuminate\Http\Request;
 use Illuminate\Database\Eloquent\Builder;
@@ -15,7 +16,7 @@ class BookController extends Controller
         //     $query->where('content', 'like', 'code%');
         // })->get();
         $tag = request("tag");
-        $books = Book::with('tags')->filter(request(['tag', 'sort', 'search']));
+        $books = Book::with('tags')->filter(request(['tags', 'sort', 'search']));
         // $books = Book::whereHas('tags', function (Builder $query) use ($tag) {
         //     $query->where('tags.id', $tag);
         // })->paginate(16);
@@ -36,7 +37,8 @@ class BookController extends Controller
     {
         return view('books.create');
     }
-    public function store(){
+    public function store()
+    {
         request()->validate([
             'image' => 'image|mimes:jpeg,png,jpg,gif,svg|max:50000',
             'title' => 'required',
@@ -60,22 +62,25 @@ class BookController extends Controller
                 'cover' => $imageName,
             ]);
         }
-        return redirect('/books/'.$book->id)->with('created',true);
+        return redirect('/books/' . $book->id)->with('created', true);
     }
-    public function destroy(Book $book){
-        if($book->user_id != auth()->user()->id){
+    public function destroy(Book $book)
+    {
+        if ($book->user_id != auth()->user()->id) {
             return false;
         }
         $book->delete();
         return true;
     }
-    public function edit(Book $book){
-        return view('books.edit',[
+    public function edit(Book $book)
+    {
+        return view('books.edit', [
             'book' => $book,
         ]);
     }
-    public function update(Book $book){
-        if($book->user_id != auth()->user()->id){
+    public function update(Book $book)
+    {
+        if ($book->user_id != auth()->user()->id) {
             abort(403);
         }
 
@@ -102,11 +107,27 @@ class BookController extends Controller
                 'cover' => $imageName,
             ]);
         }
-        return redirect('/books/'.$book->id);
+        return redirect('/books/' . $book->id);
+    }
+    public function tagStore(Book $book)
+    {
+        request()->validate([
+            'value' => 'required',
+        ]);
+        $tag = Tag::find(request('value'));
+        if ($tag) {
+            if ($book->tags->contains($tag)) {
+                abort(400);
+            }
+            $book->tags()->attach(request('value'));
+        } else {
+            abort(404);
+        }
+        return json_encode($tag);
     }
     public function getTitles()
     {
-        $books = Book::orderBy('title')->select('title', 'id')->get();
+        $books = Book::orderBy('title')->select('title')->get();
         return json_encode($books);
     }
 }

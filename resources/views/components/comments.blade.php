@@ -1,17 +1,14 @@
-
 <div class="accordion-item">
     <h2 class="accordion-header" id="headingOne">
-        <button
-            class="accordion-button
+        <button class="accordion-button
             @if (session('commented')) collapsed @endif
             "
-            type="button" data-bs-toggle="collapse" data-bs-target="#collapseOne"
-            aria-expanded="true" aria-controls="collapseOne">
+            type="button" data-bs-toggle="collapse" data-bs-target="#collapseOne" aria-expanded="true"
+            aria-controls="collapseOne">
             Comments
         </button>
     </h2>
-    <div id="collapseOne"
-        class="accordion-collapse collapse
+    <div id="collapseOne" class="accordion-collapse collapse
     @if (session('commented')) show @endif
     "
         aria-labelledby="headingOne" data-bs-parent="#accordionExample">
@@ -20,8 +17,8 @@
                 <div class="d-flex flex-start mt-4">
                     <a class="me-3" href="#">
                         <img class="rounded-circle shadow-1-strong"
-                            src="{{ Storage::url('avatars/' . $comment->user->info->image) }}"
-                            alt="avatar" width="65" height="65" />
+                            src="{{ Storage::url('avatars/' . $comment->user->info->image) }}" alt="avatar"
+                            width="65" height="65" />
                     </a>
                     <div class="flex-grow-1 flex-shrink-1">
                         <div>
@@ -34,6 +31,13 @@
                             <p class="small mb-0">
                                 {{ $comment->body }}
                             </p>
+                            @if ($comment->user_id === auth()->user()->id)
+                                <div class="d-flex">
+                                    <a href="/{{ $comment->id }}/delete"
+                                        class="btn btn-danger btn-sm ms-auto">DELETE</a>
+                                </div>
+                            @endif
+
                         </div>
                     </div>
                 </div>

@@ -19,23 +19,69 @@ class ChapterController extends Controller
             'prevChapter' => $prevChapter
         ]);
     }
-    public function create(Book $book){
-        return view('chapters.create',
+    public function create(Book $book)
+    {
+        return view(
+            'chapters.create',
             [
                 'book' => $book,
             ]
-            );
+        );
     }
-    public function store(Book $book){
+    public function store(Book $book)
+    {
         request()->validate([
             'title' => 'required',
             'body' => 'required',
+            'number' => 'required'
         ]);
-        $book->chapters()->create([
-            'title' => request('title'),
-            'body' => request('body'),
-            'number' => $book->chapters->count() + 1,
+        $chapterExist = Chapter::where('book_id', $book->id)->where('number', request('number'))->first();
+        if ($chapterExist) {
+            $chapterExist->update([
+                'title' => request('title'),
+                'body' => request('body'),
+            ]);
+        } else {
+            $book->chapters()->create([
+                'title' => request('title'),
+                'body' => request('body'),
+                'number' => request('number'),
+            ]);
+        }
+        return redirect('/books/' . $book->id);
+    }
+    public function destroy(Chapter $chapter)
+    {
+        if ($chapter->book->user_id != auth()->user()->id) {
+            abort(403);
+        }
+        $chapter->delete();
+        return back();
+    }
+    public function edit(Chapter $chapter)
+    {
+        return view('chapters.edit', [
+            'chapter' => $chapter
         ]);
-        return redirect('/books/'.$book->id);
+    }
+    public function update(Chapter $chapter)
+    {
+        if ($chapter->book->user_id != auth()->user()->id) {
+            abort(403);
+        }
+        $args = request()->validate([
+            'title' => 'required',
+            'body' => 'required',
+            'number' => 'required'
+        ]);
+        $chapterWithNumber = Chapter::where('book_id', $chapter->book_id)->where('number', request('number'))->first();
+        if ($chapterWithNumber) {
+            $chapter->delete();
+            $chapterWithNumber->update($args);
+            return $this->show($chapterWithNumber);
+        } else {
+            $chapter->update($args);
+            return $this->show($chapter);
+        }
     }
 }

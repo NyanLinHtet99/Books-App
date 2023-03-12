@@ -19,8 +19,8 @@ class BookFactory extends Factory
     public function definition(): array
     {
         return [
-            'user_id' => User::factory()->has(UserInfo::factory(),'info'),
-            'title' => $this->faker->sentence(),
+            'user_id' => User::factory()->has(UserInfo::factory(), 'info'),
+            'title' => implode(" ", $this->faker->words(6)),
             'description' => $this->faker->paragraph(),
             'cover' => 'default.jpg',
         ];

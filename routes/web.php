@@ -31,21 +31,23 @@ Route::get('/books', [BookController::class, 'index']);
 Route::get('/books/create', [BookController::class, 'create']);
 Route::get('/books/{book}', [BookController::class, 'show']);
 Route::get('/books/{book}/edit', [BookController::class, 'edit']);
-Route::post('/books/store',[BookController::class,'store']);
-Route::delete('/books/{book}',[BookController::class,'destroy']);
-Route::put('/books/{book}',[BookController::class,'update']);
-Route::get('/{book}/chapters/create',[ChapterController::class,'create']);
-Route::post('/{book}/chapters/store',[ChapterController::class,'store']);
+Route::post('/books/store', [BookController::class, 'store']);
+Route::delete('/books/{book}', [BookController::class, 'destroy']);
+Route::put('/books/{book}', [BookController::class, 'update']);
+Route::get('/{book}/chapters/create', [ChapterController::class, 'create']);
+Route::post('/{book}/chapters/store', [ChapterController::class, 'store']);
 
 Route::get('/chapters/{chapter}', [ChapterController::class, 'show']);
-Route::get('/chapters/{chapter}/delete',[ChapterController::class,'destroy']);
-Route::get('/chapters/{chapter}/edit',[ChapterController::class,'edit']);
-Route::put('/chapters/{chapter}',[ChapterController::class,'update']);
+Route::get('/chapters/{chapter}/delete', [ChapterController::class, 'destroy']);
+Route::get('/chapters/{chapter}/edit', [ChapterController::class, 'edit']);
+Route::put('/chapters/{chapter}', [ChapterController::class, 'update']);
 Route::get('/titles', [BookController::class, 'getTitles']);
 Route::get('/rating', [RatingController::class, 'show']);
 Route::post('/rating/store', [RatingController::class, 'store']);
 Route::post('/comment/store', [CommentController::class, 'store']);
+Route::get('/{comment}/delete', [CommentController::class, 'destroy']);
 Route::get('/tags', [TagController::class, 'index']);
+Route::post('{book}/tags/store', [BookController::class, 'tagStore']);
 
 Auth::routes();
 

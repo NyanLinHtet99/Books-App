@@ -4,25 +4,26 @@
         <div class="row justify-content-center">
             <div class="col-10">
                 <h3 class="fst-italic">
-                    <a href="/books/{{ $book->id }}" style="text-decoration: none;">
-                        {{ $book->title }}
+                    <a href="/books/{{ $chapter->book->id }}" style="text-decoration: none;">
+                        {{ $chapter->book->title }}
                     </a>
                 </h3>
-                <p class="blog-post-meta">{{ $book->created_at->format('Y-m-d') }}
+                <p class="blog-post-meta">{{ $chapter->book->created_at->format('Y-m-d') }}
                 </p>
                 <hr>
                 <div class="card p-4">
-                    <form action="/{{ $book->id }}/chapters/store" method="POST">
+                    <form action="/chapters/{{ $chapter->id }}" method="POST">
                         @csrf
+                        @method('PUT')
                         <div class="mb-4">
-                            <input type="text" name="title" id="title" required>
+                            <input type="text" name="title" id="title" required value="{{ $chapter->title }}">
                         </div>
                         <div class="fw-bold d-flex align-items-center mb-2">
                             <p style="line-height: 30px;" class="mb-0">Chapter -</p>
-                            <input type="number" name="number" id="number"
-                                value="{{ $book->chapters->max('number') + 1 }}">
+                            <input type="number" name="number" id="number" value="{{ $chapter->number }}">
                         </div>
                         <textarea name="body" id="body" class="fs-5 w-100">
+                            {!! $chapter->body !!}
                         </textarea>
                         <button class="mt-2 btn btn-success ">Submit</button>
                     </form>

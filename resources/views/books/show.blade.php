@@ -32,11 +32,15 @@
                     </div>
                     <div class="p-4">
                         <h3 class="h5 fw-bold">Tags</h3>
-                        <div class="d-flex">
+                        <div class="d-flex" id="tagContainer">
                             @foreach ($book->tags as $tag)
                                 <a href="/?tag={{ $tag->id }}"><span
                                         class="py-1 px-2 badge rounded-pill text-bg-primary me-3">{{ $tag->name }}</span></a>
                             @endforeach
+                        </div>
+                        <div class="d-flex align-items-center mt-3" id="tagsContainer">
+                            <div id="tags"></div>
+                            <button class="btn btn-primary" id="addTag" data-book="{{ $book->id }}">Add</button>
                         </div>
                     </div>
                     <div class="card-body">
@@ -62,20 +66,28 @@
                                     <div class="accordion-body">
                                         <ul class="list-group">
                                             @if ($book->user->id === auth()->user()->id)
-                                                <a href="" class="list-group-item list-group-item-action bg-primary"
+                                                <a href="/{{ $book->id }}/chapters/create"
+                                                    class="list-group-item list-group-item-action bg-primary mb-3"
                                                     style="color:white; text-align: center">Add Chapter</a>
                                             @endif
                                             @foreach ($book->chapters as $chapter)
                                                 <div class="d-flex mb-2">
                                                     <a href="/chapters/{{ $chapter->id }}"
-                                                        class="list-group-item list-group-item-action" style="cursor: pointer;width: 90%">
+                                                        class="list-group-item list-group-item-action"
+                                                        style="cursor: pointer;
+                                                        @if ($book->user->id === auth()->user()->id) width: 90% @endif
+                                                        ">
                                                         <strong class="me-3">Chapter - {{ $chapter->number }}</strong>
                                                         {{ $chapter->title }}
                                                     </a>
-                                                    <a href="/chapters/{{ $chaper->id }}/delete" class="btn btn-danger mx-2">DELETE</a>
-                                                    <a href="/chapters/{{ $chaper->id }}/edit" class="btn btn-info">EDIT</a>
-                                                </div>
+                                                    @if ($book->user->id === auth()->user()->id)
+                                                        <a href="/chapters/{{ $chapter->id }}/delete"
+                                                            class="btn btn-danger mx-2 ">DELETE</a>
+                                                        <a href="/chapters/{{ $chapter->id }}/edit"
+                                                            class="btn btn-info">EDIT</a>
+                                                    @endif
 
+                                                </div>
                                             @endforeach
                                         </ul>
 
@@ -111,6 +123,58 @@
                         }
                     }
                 });
+            });
+            var source = {
+                datatype: "json",
+                datafields: [{
+                        name: "name",
+                    },
+                    {
+                        name: "id",
+                    },
+                ],
+                url: "/tags",
+                async: false,
+            };
+            var dataAdapter = new $.jqx.dataAdapter(source);
+            // Create a jqxComboBox
+            $("#tags").jqxDropDownList({
+                selectedIndex: 0,
+                source: dataAdapter,
+                displayMember: "name",
+                valueMember: "id",
+                theme: "light",
+                incrementalSearch: true,
+                searchMode: "startswithignorecase",
+                width: 200,
+                height: 30,
+            });
+            $("#tags").jqxDropDownList("insertAt", {
+                name: "Select a tag to add",
+                id: 0
+            }, 0);
+        });
+        $('#addTag').on('click', function() {
+            let id = $('#tags').jqxDropDownList("val");
+            if (id === 0) {
+                return;
+            }
+            $.ajax({
+                url: '/' + $(this).attr('data-book') + '/tags/store',
+                type: 'post',
+                data: {
+                    'value': id,
+                },
+                dataType: 'json',
+                success: function(response) {
+                    let a = $('<a>').attr({
+                        'href': '/?tags=' + response.id,
+                    })
+                    let span = $('<span>').addClass('py-1 px-2 badge rounded-pill text-bg-primary me-3')
+                        .text(response.name);
+                    a.append(span);
+                    $('#tagContainer').append(a);
+                }
             });
         });
         $('#userRating').on('change', function(e) {
