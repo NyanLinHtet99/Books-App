@@ -10,6 +10,10 @@ use Illuminate\Database\Eloquent\Builder;
 
 class BookController extends Controller
 {
+    public function __construct()
+    {
+        $this->middleware('auth');
+    }
     public function index()
     {
         // $posts = Post::whereHas('comments', function (Builder $query) {

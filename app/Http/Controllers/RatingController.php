@@ -9,6 +9,10 @@ use Termwind\Components\Raw;
 
 class RatingController extends Controller
 {
+    public function __construct()
+    {
+        $this->middleware('auth');
+    }
     public function show()
     {
         $query = Rating::where('book_id', request('book_id'));
