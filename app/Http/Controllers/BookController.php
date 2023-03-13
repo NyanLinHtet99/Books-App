@@ -44,7 +44,7 @@ class BookController extends Controller
     public function store()
     {
         request()->validate([
-            'image' => 'image|mimes:jpeg,png,jpg,gif,svg|max:50000',
+            'cover' => 'image|mimes:jpeg,png,jpg,gif,svg|max:50000',
             'title' => 'required',
             'description' => 'required'
         ]);
@@ -60,9 +60,9 @@ class BookController extends Controller
                 'user_id' => $userId,
             ]);
         $imageName = null;
-        if (request('image')) {
-            $imageName = $book->id . '.' . request('image')->extension();
-            request('image')->storeAs(
+        if (request('cover')) {
+            $imageName = $book->id . '.' . request('cover')->extension();
+            request('cover')->storeAs(
                 'books',
                 $imageName,
                 'public'
