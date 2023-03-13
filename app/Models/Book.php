@@ -45,6 +45,13 @@ class Book extends Model
                         ->orWhere('description', 'LIKE', '%' . strtolower($search) . '%')
                 );
         });
+        $query->when($filter['user'] ?? false, function ($query, $user) {
+            $query
+                ->where(
+                    'books.user_id',
+                    $user
+                );
+        });
         $query->when($filter['tags'] ?? false, function ($query, $tags) {
             foreach ($tags as $tag) {
                 $query

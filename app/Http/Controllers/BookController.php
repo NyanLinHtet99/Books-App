@@ -16,7 +16,7 @@ class BookController extends Controller
         //     $query->where('content', 'like', 'code%');
         // })->get();
         $tag = request("tag");
-        $books = Book::with('tags')->filter(request(['tags', 'sort', 'search']));
+        $books = Book::with('tags')->filter(request(['tags', 'sort', 'search', 'user']));
         // $books = Book::whereHas('tags', function (Builder $query) use ($tag) {
         //     $query->where('tags.id', $tag);
         // })->paginate(16);
@@ -45,11 +45,16 @@ class BookController extends Controller
             'description' => 'required'
         ]);
         $userId = auth()->user()->id;
-        $book = Book::factory()->create([
-            'title' => request('title'),
-            'description' => request('description'),
-            'user_id' => $userId,
-        ]);
+        $book = Book::factory()
+            ->hasRatings(1, [
+                'user_id' => $userId,
+                'value' => 0,
+            ])
+            ->create([
+                'title' => request('title'),
+                'description' => request('description'),
+                'user_id' => $userId,
+            ]);
         $imageName = null;
         if (request('image')) {
             $imageName = $book->id . '.' . request('image')->extension();
@@ -62,6 +67,7 @@ class BookController extends Controller
                 'cover' => $imageName,
             ]);
         }
+
         return redirect('/books/' . $book->id)->with('created', true);
     }
     public function destroy(Book $book)
@@ -85,7 +91,7 @@ class BookController extends Controller
         }
 
         request()->validate([
-            'image' => 'image|mimes:jpeg,png,jpg,gif,svg|max:50000',
+            'cover' => 'image|mimes:jpeg,png,jpg,gif,svg|max:50000',
             'title' => 'required',
             'description' => 'required'
         ]);
@@ -96,9 +102,9 @@ class BookController extends Controller
             'user_id' => $userId,
         ]);
         $imageName = null;
-        if (request('image')) {
-            $imageName = $book->id . '.' . request('image')->extension();
-            request('image')->storeAs(
+        if (request('cover')) {
+            $imageName = $book->id . '.' . request('cover')->extension();
+            request('cover')->storeAs(
                 'books',
                 $imageName,
                 'public'
@@ -129,5 +135,25 @@ class BookController extends Controller
     {
         $books = Book::orderBy('title')->select('title')->get();
         return json_encode($books);
+    }
+    public function getTags(Book $book)
+    {
+        $tags = $book->tags;
+        return json_encode($tags);
+    }
+    public function destroyTag(Book $book)
+    {
+        request()->validate([
+            'id' => 'required',
+        ]);
+        $tag = Tag::find(request('id'));
+        if ($tag) {
+            if ($book->tags->contains($tag)) {
+                $book->tags()->detach($tag->id);
+            }
+        } else {
+            abort(404);
+        }
+        return json_encode($tag);
     }
 }

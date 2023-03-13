@@ -3,12 +3,12 @@ let urlData = {
     tags: [],
 };
 let params = new URLSearchParams(window.location.search);
-URLSearchParams.prototype.remove = function (key, value) {
-    const entries = this.getAll(key);
-    const newEntries = entries.filter((entry) => entry !== value);
-    this.delete(key);
-    newEntries.forEach((newEntry) => this.append(key, newEntry));
-};
+// URLSearchParams.prototype.remove = function (key, value) {
+//     const entries = this.getAll(key);
+//     const newEntries = entries.filter((entry) => entry !== value);
+//     this.delete(key);
+//     newEntries.forEach((newEntry) => this.append(key, newEntry));
+// };
 // let params = new Proxy(new URLSearchParams(window.location.search), {
 //     get: (searchParams, prop) => searchParams.get(prop),
 // });
@@ -23,6 +23,9 @@ if (params.get("sort")) {
 }
 if (params.get("search")) {
     urlData["search"] = params.get("search");
+}
+if (params.get("user")) {
+    urlData["user"] = params.get("user");
 }
 //document ready function
 $(function () {
@@ -347,6 +350,9 @@ function changeOffset(book) {
 
     if (winHeight > $(window).height()) {
         y = offset.top - (height - book.height());
+        if (y < 0) {
+            y = offset.top;
+        }
     }
     if (winWidth > $(window).width()) {
         x = offset.left - width;

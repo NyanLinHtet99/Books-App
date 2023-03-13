@@ -27,6 +27,7 @@ use App\Models\Book;
 */
 
 Route::post('/user/update', [UserInfoController::class, 'update'])->name('user.update');
+Route::get('/profile', [UserInfoController::class, 'show']);
 Route::get('/books', [BookController::class, 'index']);
 Route::get('/books/create', [BookController::class, 'create']);
 Route::get('/books/{book}', [BookController::class, 'show']);
@@ -48,6 +49,8 @@ Route::post('/comment/store', [CommentController::class, 'store']);
 Route::get('/{comment}/delete', [CommentController::class, 'destroy']);
 Route::get('/tags', [TagController::class, 'index']);
 Route::post('{book}/tags/store', [BookController::class, 'tagStore']);
+Route::get('{book}/tags/', [BookController::class, 'getTags']);
+Route::delete('{book}/tags/', [BookController::class, 'destroyTag']);
 
 Auth::routes();
 

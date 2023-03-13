@@ -49,7 +49,7 @@ class DatabaseSeeder extends Seeder
             $count = rand(2, 5);
             for ($j = 0; $j < $count; $j++) {
                 Chapter::factory()->for($book)->create([
-                    'number' => ($j+1),
+                    'number' => ($j + 1),
                 ]);
                 $book->tags()->attach(rand(1, 10));
             }

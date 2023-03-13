@@ -31,4 +31,17 @@ class UserInfoController extends Controller
         $user->update(['name' => request('name'), 'email' => request('email')]);
         return back()->with('infoUpdated', true);
     }
+    public function show()
+    {
+        request()->validate([
+            'user' => 'required'
+        ]);
+        $user = User::find(request('user'));
+        if (!$user) {
+            abort(404);
+        }
+        return view('profiles.show', [
+            'user' => $user,
+        ]);
+    }
 }

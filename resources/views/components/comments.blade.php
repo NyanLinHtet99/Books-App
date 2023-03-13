@@ -15,7 +15,7 @@
         <div class="accordion-body">
             @foreach ($book->comments as $comment)
                 <div class="d-flex flex-start mt-4">
-                    <a class="me-3" href="#">
+                    <a class="me-3" href="/profile/?user={{ $comment->user->id }}">
                         <img class="rounded-circle shadow-1-strong"
                             src="{{ Storage::url('avatars/' . $comment->user->info->image) }}" alt="avatar"
                             width="65" height="65" />
